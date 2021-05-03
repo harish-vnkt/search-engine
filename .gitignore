@@ -164,4 +164,5 @@ Thumbs.db
 
 *.json
 *.pkl
+*.jl
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
