@@ -7,7 +7,7 @@
 # useful for handling different item types with a single interface
 from os import POSIX_FADV_WILLNEED
 from itemadapter import ItemAdapter
-from scrapy.exporters import PickleItemExporter
+from scrapy.exporters import JsonLinesItemExporter
 
 
 class CrawlingPipeline:
@@ -19,7 +19,7 @@ class CrawlingPipeline:
     def open_spider(self, spider):
         print("Export started")
         self.file_handle = open(self.file_name, 'wb')
-        self.exporter = PickleItemExporter(self.file_handle, protocol=3)
+        self.exporter = JsonLinesItemExporter(self.file_handle)
         self.exporter.start_exporting()
 
     def close_spider(self, spider):
