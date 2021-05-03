@@ -9,6 +9,7 @@ class UICSpider(scrapy.Spider):
 
     name = "UIC"
     start_urls = ["https://www.cs.uic.edu/"]
+    allowed_domains = ["uic.edu"]
     done_urls = set()
     i = 0
 
