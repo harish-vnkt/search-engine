@@ -1,34 +1,41 @@
 import scrapy
 from bs4 import BeautifulSoup
 from collections import deque
+from scrapy.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
 
 
 class UICSpider(scrapy.Spider):
 
     name = "UIC"
-    urls = deque()
+    start_urls = ["https://www.cs.uic.edu/"]
     done_urls = set()
     i = 0
 
-    def __init__(self, **kwargs):
-        super().__init__(name=self.name, **kwargs)
-        self.urls.append("https://www.cs.uic.edu/")
-
-    def start_requests(self):
-
-        while self.urls and self.i < 3000:
-            url = self.urls.popleft()
-            if url not in self.done_urls:
-                self.done_urls.add(url)
-                self.i += 1
-                yield scrapy.Request(url=url, callback=self.parse)
-            else:
-                continue
-
     def parse(self, response):
 
-        soup = BeautifulSoup(response.text, 'html.parser')
-        yield {
-            response.url: soup.prettify()
-        }
+        if self.i < 3000 and "uic.edu" in response.url and response.url not in self.done_urls:
+
+            self.done_urls.add(response.url)
+
+            soup = BeautifulSoup(response.text, 'html.parser')
+            links = soup.find_all('a')
+            outgoing_urls = []
+
+            for link in links:
+                url = link.get("href")
+                if url and "uic.edu" in url and "@" not in url:
+                    outgoing_urls.append(url)
+
+            self.i += 1
+
+            yield {
+                "url": response.url,
+                "soup": soup.prettify(),
+                "outgoing_urls": outgoing_urls
+            }
+
+            yield from response.follow_all(outgoing_urls, callback=self.parse)
+
+
 
