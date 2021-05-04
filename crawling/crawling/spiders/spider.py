@@ -1,8 +1,6 @@
 import scrapy
 from bs4 import BeautifulSoup
-from collections import deque
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors import LinkExtractor
+from urllib.parse import urljoin
 
 
 class UICSpider(scrapy.Spider):
@@ -12,10 +10,11 @@ class UICSpider(scrapy.Spider):
     allowed_domains = ["uic.edu"]
     done_urls = set()
     i = 0
+    # download_delay = 2.0
 
     def parse(self, response):
 
-        if self.i < 3000 and "uic.edu" in response.url and response.url not in self.done_urls:
+        if self.i < 4000 and "uic.edu" in response.url and response.url not in self.done_urls:
 
             self.done_urls.add(response.url)
 
@@ -25,6 +24,7 @@ class UICSpider(scrapy.Spider):
 
             for link in links:
                 url = link.get("href")
+                url = urljoin(response.url, url)
                 if url and "uic.edu" in url and "@" not in url:
                     outgoing_urls.append(url)
 
