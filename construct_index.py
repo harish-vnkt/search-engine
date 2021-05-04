@@ -72,6 +72,7 @@ def construct_index(path):
         s = s.strip()
         words = s.split()
 
+        print(file["url"])
         tf_dct[file["url"]] = {}
 
         for word in words:
@@ -95,6 +96,9 @@ def construct_index(path):
                     inv_index[stemmed_word][file["url"]] = 1
                 else:
                     inv_index[stemmed_word][file["url"]] += 1
+
+        if len(tf_dct[file["url"]]) == 0:
+            del tf_dct[file["url"]]
 
     print("Calculating vector norm for each document ..........")
     # calculate vector norms for each document
