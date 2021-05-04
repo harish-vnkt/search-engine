@@ -66,20 +66,30 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="File for querying the scraped data")
     parser.add_argument("--index_path", help="Path to JSON file containing inverted index", type=str, default="inv_index.json")
     parser.add_argument("--doc_path", help="Path to JSON file containing TF-IDF vector norm for each of the scraped pages", type=str, default="doc_len.json")
+    parser.add_argument("--page_rank", help="Path to JSON file containing page rank scores", type=str, default="page_rank.json")
     args = parser.parse_args()
 
     with open(args.index_path, 'r') as f:
         inv_index = json.load(f)
     with open(args.doc_path, 'r') as f:
         doc_len = json.load(f)
+    with open(args.page_rank, 'r') as f:
+        page_rank = json.load(f)
 
     while True:
 
-        query = input("Enter a query to be searched. Enter \"exit\" to exit.")
+        query = input("Enter a query to be searched. Enter \"exit\" to exit.\n")
         if query == "exit":
             print("Exiting ..........")
             break
         else:
-            print(construct_query_response(query, inv_index, doc_len))
+            result = construct_query_response(query, inv_index, doc_len)
+            i = 0
+            for k, v in result.items():
+                if i < 10:
+                    print(f"URL: {k}, Relevance: {v}, Page Rank: {page_rank[k]}")
+                    i += 1
+                else:
+                    break
 
 
